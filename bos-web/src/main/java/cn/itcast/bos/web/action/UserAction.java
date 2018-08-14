@@ -1,5 +1,7 @@
 package cn.itcast.bos.web.action;
 
+import java.io.IOException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,8 @@ import org.springframework.stereotype.Controller;
 import cn.itcast.bos.dao.IUserDao;
 import cn.itcast.bos.domain.User;
 import cn.itcast.bos.service.IUserService;
+import cn.itcast.bos.utils.BOSUtils;
+import cn.itcast.bos.utils.MD5Utils;
 import cn.itcast.bos.web.action.base.BaseAction;
 @Controller
 @Scope("prototype")
@@ -58,5 +62,27 @@ public class UserAction extends BaseAction<User> {
 		//销毁session
 		ServletActionContext.getRequest().getSession().invalidate();
 		return LOGIN;
+	}
+	
+	/**
+	 * 修改当前用户的密码
+	 * @return
+	 * @throws IOException
+	 */
+	public String editPassword() throws IOException {
+		//设置修改结果的标志位，1：成功  0：失败
+		String f = "1";
+		//获取当前用户
+		User user = BOSUtils.getLoginUser();
+		user.setPassword(MD5Utils.md5(model.getPassword()));
+		try {
+			userService.editPassword(user);
+		} catch (Exception e) {
+			f = "0";
+			e.printStackTrace();
+		}
+		ServletActionContext.getResponse().setContentType("text/html chartset='utf-8'");
+		ServletActionContext.getResponse().getWriter().print(f);
+		return NONE;
 	}
 }
