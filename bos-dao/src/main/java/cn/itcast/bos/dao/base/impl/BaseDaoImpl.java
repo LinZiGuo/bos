@@ -3,17 +3,22 @@ package cn.itcast.bos.dao.base.impl;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 import cn.itcast.bos.dao.base.IBaseDao;
+import cn.itcast.bos.utils.PageBean;
 /**
  * 持久层通用实现
  * @author 郭子灵
@@ -58,13 +63,12 @@ public class BaseDaoImpl<T> extends HibernateDaoSupport implements IBaseDao<T> {
 
 	
 	public T findById(Serializable id) {
-		this.getHibernateTemplate().get(entityClass, id);
-		return null;
+		return this.getHibernateTemplate().get(entityClass, id);
 	}
 
 	
 	public List<T> findAll() {
-		String hql = "FRIM "+entityClass.getSimpleName();
+		String hql = "FROM "+entityClass.getSimpleName();
 		return (List<T>) this.getHibernateTemplate().find(hql);
 	}
 
@@ -81,4 +85,34 @@ public class BaseDaoImpl<T> extends HibernateDaoSupport implements IBaseDao<T> {
 		query.executeUpdate();
 	}
 
+	/**
+	 * 通用分页查询方法
+	 */
+	public void pageQuery(PageBean pageBean) {
+		int currentPage = pageBean.getCurrentPage();
+		int pageSize = pageBean.getPageSize();
+		DetachedCriteria detachedCriteria = pageBean.getDetachedCriteria();
+		
+		//查询total---总数据量
+		//改变Hibernate发出的SQL形式 =》 select count(*) from ...
+		detachedCriteria.setProjection(Projections.rowCount());
+		List<Long> totalList = (List<Long>) this.getHibernateTemplate().findByCriteria(detachedCriteria);
+		Long total = totalList.get(0);
+		pageBean.setTotal(total.intValue());
+		
+		//查询rows---当前页需要展示的数据集合
+		//改变Hibernate发出的SQL形式 =》 select * from ...
+		detachedCriteria.setProjection(null);
+		//从哪里开始查询
+		int firstResult = (currentPage - 1) * pageSize;
+		//查询几条
+		int maxResults = pageSize;
+		//查询数据库，获取rows---当前页要展示的数据集合
+		List rows = this.getHibernateTemplate().findByCriteria(detachedCriteria, firstResult, maxResults);
+		pageBean.setRows(rows);
+	}
+
+	public void saveOrUpdate(T entity) {
+		this.getHibernateTemplate().saveOrUpdate(entity);
+	}
 }

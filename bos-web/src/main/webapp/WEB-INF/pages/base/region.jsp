@@ -26,6 +26,7 @@
 <script
 	src="${pageContext.request.contextPath }/js/easyui/locale/easyui-lang-zh_CN.js"
 	type="text/javascript"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath }/js/jquery.ocupload-1.1.2.js"></script>
 <script type="text/javascript">
 	function doAdd(){
 		$('#addRegionWindow').window("open");
@@ -36,7 +37,24 @@
 	}
 	
 	function doDelete(){
-		alert("删除...");
+		//alert("删除...");
+		var rows = $("#grid").datagrid("getSelections");
+		if(rows == 0){
+			$.messager.alert("提示信息","请选择需要删除的区域！","info");
+		} else{
+			$.messager.confirm("提示信息","确定删除当前选中的区域？",function(r){
+				if(r){
+					var ids = "";
+					var array = new Array();
+					for(var i=0;i<rows.length;i++){
+						var id = rows[i].id;
+						array.push(id);
+					}
+					ids = array.join(",");
+					location.href="${pageContext.request.contextPath}/regionAction_delete.action?ids=" + ids;
+				}
+			});
+		}
 	}
 	
 	//工具栏
@@ -98,7 +116,7 @@
 	
 	$(function(){
 		// 先将body隐藏，再显示，不会出现页面刷新效果
-		$("body").css({visibility:"visible"});
+		$("body").css({visibility:"visible"});		
 		
 		// 收派标准数据表格
 		$('#grid').datagrid( {
@@ -110,7 +128,7 @@
 			pageList: [30,50,100],
 			pagination : true,
 			toolbar : toolbar,
-			url : "json/region.json",
+			url : "${pageContext.request.contextPath}/regionAction_pageQuery.action",
 			idField : 'id',
 			columns : columns,
 			onDblClickRow : doDblClickRow
@@ -127,11 +145,20 @@
 	        resizable:false
 	    });
 		
+		//页面加载完成后，调用OCupLoad插件方法
+		$('#button-import').upload({
+			name:'regionFile',
+			action:'${pageContext.request.contextPath}/regionAction_importXls.action'
+		});
+		
+		
 	});
 
 	function doDblClickRow(){
 		alert("双击表格数据...");
 	}
+	
+	
 </script>	
 </head>
 <body class="easyui-layout" style="visibility:hidden;">

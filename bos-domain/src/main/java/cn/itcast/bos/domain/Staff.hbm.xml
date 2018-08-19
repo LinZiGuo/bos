@@ -32,4 +32,12 @@
             <one-to-many class="cn.itcast.bos.domain.Decidedzone" />
         </set>
     </class>
+    <!-- 命名查询语句，删除取派员（逻辑删除） -->
+    <query name="staff.delete">
+    	UPDATE Staff SET deltag = '1' where id = ?
+    </query>
+    <!-- 命名查询语句，还原取派员（逻辑还原） -->
+    <query name="staff.restore">
+    	UPDATE Staff SET deltag = '0' where id = ?
+    </query>
 </hibernate-mapping>

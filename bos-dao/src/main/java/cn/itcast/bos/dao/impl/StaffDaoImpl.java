@@ -1,8 +1,5 @@
 package cn.itcast.bos.dao.impl;
 
-import java.io.Serializable;
-import java.util.List;
-
 import org.springframework.stereotype.Repository;
 
 import cn.itcast.bos.dao.IStaffDao;
