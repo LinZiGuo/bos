@@ -10,7 +10,7 @@
         <many-to-one name="decidedzone" class="cn.itcast.bos.domain.Decidedzone" fetch="select">
             <column name="decidedzone_id" length="32" />
         </many-to-one>
-        <many-to-one name="region" class="cn.itcast.bos.domain.Region" fetch="select">
+        <many-to-one lazy="false" name="region" class="cn.itcast.bos.domain.Region" fetch="select">
             <column name="region_id" length="32" />
         </many-to-one>
         <property name="addresskey" type="java.lang.String">
@@ -29,4 +29,7 @@
             <column name="position" />
         </property>
     </class>
+    <query name="subarea.deleteDecidedzone">
+    	UPDATE Subarea SET decidedzone = null WHERE decidedzone.id = ?
+    </query>
 </hibernate-mapping>

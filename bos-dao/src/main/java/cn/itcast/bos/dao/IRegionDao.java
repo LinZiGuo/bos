@@ -8,5 +8,7 @@ import cn.itcast.bos.domain.Region;
 public interface IRegionDao extends IBaseDao<Region> {
 
 	public List<Region> findByQ(String q);
+	
+	public String getNewId();
 
 }

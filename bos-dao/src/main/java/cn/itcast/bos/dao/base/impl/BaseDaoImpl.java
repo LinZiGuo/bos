@@ -103,6 +103,8 @@ public class BaseDaoImpl<T> extends HibernateDaoSupport implements IBaseDao<T> {
 		//查询rows---当前页需要展示的数据集合
 		//改变Hibernate发出的SQL形式 =》 select * from ...
 		detachedCriteria.setProjection(null);
+		//指定Hibernate对象封装的方式
+		detachedCriteria.setResultTransformer(DetachedCriteria.ROOT_ENTITY);
 		//从哪里开始查询
 		int firstResult = (currentPage - 1) * pageSize;
 		//查询几条
@@ -115,4 +117,12 @@ public class BaseDaoImpl<T> extends HibernateDaoSupport implements IBaseDao<T> {
 	public void saveOrUpdate(T entity) {
 		this.getHibernateTemplate().saveOrUpdate(entity);
 	}
+
+	/**
+	 * 查询过滤条件
+	 */
+	public List<T> findByCriteria(DetachedCriteria detachedCriteria) {
+		return (List<T>) this.getHibernateTemplate().findByCriteria(detachedCriteria);
+	}
+
 }

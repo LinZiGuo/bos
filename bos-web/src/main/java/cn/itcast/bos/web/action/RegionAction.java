@@ -135,4 +135,25 @@ public class RegionAction extends BaseAction<Region> {
 		regionService.batch(ids);
 		return LIST;
 	}
+	
+	/**
+	 * 添加/修改区域
+	 * @return
+	 */
+	public String add() {
+		String id = model.getId();
+		if (StringUtils.isNotBlank(id)) {
+			Region region = regionService.findById(id);
+			region.setProvince(model.getProvince());
+			region.setCity(model.getCity());
+			region.setDistrict(model.getDistrict());
+			region.setPostcode(model.getPostcode());
+			region.setShortcode(model.getShortcode());
+			region.setCitycode(model.getCitycode());
+			regionService.update(region);
+		} else {
+			regionService.save(model);
+		}
+		return LIST;
+	}
 }

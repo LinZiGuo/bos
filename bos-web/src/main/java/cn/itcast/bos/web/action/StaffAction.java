@@ -2,6 +2,7 @@ package cn.itcast.bos.web.action;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -25,7 +26,16 @@ public class StaffAction extends BaseAction<Staff> {
 	private IStaffService staffService;
 	//定义属性，接收分页参数
 	private String ids;
+	private String query;
 	
+	public String getQuery() {
+		return query;
+	}
+
+	public void setQuery(String query) {
+		this.query = query;
+	}
+
 	public String getIds() {
 		return ids;
 	}
@@ -49,8 +59,31 @@ public class StaffAction extends BaseAction<Staff> {
 	 * @throws IOException 
 	 */
 	public String pageQuery() throws IOException {
+		DetachedCriteria dc = pageBean.getDetachedCriteria();
+		if (query != null) {
+			String name = model.getName();
+			String telephone = model.getTelephone();
+			String station = model.getStation();
+			String haspda = model.getHaspda();
+			String standard = model.getStandard();
+			if (StringUtils.isNotBlank(name)) {
+				dc.add(Restrictions.like("name", "%"+name+"%"));
+			}
+			if (StringUtils.isNotBlank(telephone)) {
+				dc.add(Restrictions.like("telephone", "%"+telephone+"%"));
+			}
+			if (StringUtils.isNotBlank(station)) {
+				dc.add(Restrictions.like("station", "%"+station+"%"));
+			}
+			if (StringUtils.isNotBlank(haspda)) {
+				dc.add(Restrictions.eq("haspda", haspda));
+			}
+			if (StringUtils.isNotBlank(standard)) {
+				dc.add(Restrictions.like("standard", "%"+standard+"%"));
+			}
+		}
 		staffService.pageQuery(pageBean);
-		this.WriteObject2Json(pageBean, new String[] {"currentPage","pageSize","detachedCriteria"});
+		this.WriteObject2Json(pageBean, new String[] {"currentPage","pageSize","detachedCriteria","decidedzones"});
 		return NONE;
 	}
 	
@@ -92,27 +125,12 @@ public class StaffAction extends BaseAction<Staff> {
 	}
 	
 	/**
-	 * 条件查询
+	 * 查询未删除的取派员，返回json
 	 * @return
 	 */
-	public String view() {
-		if (StringUtils.isNotBlank(model.getName())) {
-			detachedCriteria.add(Restrictions.like("name", "'%" + model.getName() + "%'"));
-		}
-		if (StringUtils.isNotBlank(model.getTelephone())) {
-			detachedCriteria.add(Restrictions.like("telephone", "'%" + model.getTelephone() + "%'"));			
-		}
-		if (StringUtils.isNotBlank(model.getHaspda())) {
-			detachedCriteria.add(Restrictions.eq("haspda", model.getHaspda()));			
-		}
-		if (StringUtils.isNotBlank(model.getStation())) {
-			detachedCriteria.add(Restrictions.like("station", "'%" + model.getStation() + "%'"));			
-		}
-		if (StringUtils.isNotBlank(model.getStandard())) {
-			detachedCriteria.add(Restrictions.like("standard", "'%" + model.getStandard() + "%'"));			
-		}
-		staffService.pageQuery(pageBean);
-		this.WriteObject2Json(pageBean, new String[] {"currentPage","pageSize","detachedCriteria"});
+	public String listajax() {
+		List<Staff> list = staffService.findListNotDelete();
+		WriteObject2Json(list, new String[] {"decidedzones"});
 		return NONE;
 	}
 }

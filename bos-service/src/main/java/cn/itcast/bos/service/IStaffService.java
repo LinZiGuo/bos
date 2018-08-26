@@ -1,8 +1,6 @@
 package cn.itcast.bos.service;
 
 import java.util.List;
-import java.util.Map;
-
 import cn.itcast.bos.domain.Staff;
 import cn.itcast.bos.utils.PageBean;
 
@@ -17,4 +15,6 @@ public interface IStaffService {
 	public void update(Staff staff);
 
 	public Staff findById(String id);
+
+	public List<Staff> findListNotDelete();
 }

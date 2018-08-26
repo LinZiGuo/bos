@@ -33,7 +33,7 @@
 	
 	function doView(){
 		//alert("查看...");
-		$('#viewStaffWindow').window("open");
+		$('#searchWindow').window("open");
 	}
 	
 	//批量删除按钮对应的处理函数
@@ -207,15 +207,42 @@
 	    });
 		
 		// 查询取派员窗口
-		$('#viewStaffWindow').window({
+		$('#searchWindow').window({
 	        title: '查询取派员',
 	        width: 400,
 	        modal: true,
 	        shadow: true,
 	        closed: true,
-	        height: 400,
+	        height: 350,
 	        resizable:false
 	    });
+		
+		//定义一个工具方法，用于将指定的form表单中所有的输入项转为json数据{key:value,key:value}
+		$.fn.serializeJson=function(){  
+            var serializeObj={};  
+            var array=this.serializeArray();
+            $(array).each(function(){  
+                if(serializeObj[this.name]){  
+                    if($.isArray(serializeObj[this.name])){  
+                        serializeObj[this.name].push(this.value);  
+                    }else{  
+                        serializeObj[this.name]=[serializeObj[this.name],this.value];  
+                    }  
+                }else{  
+                    serializeObj[this.name]=this.value;   
+                }  
+            });
+            return serializeObj;  
+        }; 
+		
+		$("#btn").click(function(){
+			//定义一个工具方法，用于将指定的form表单中所有的输入项转为json数据{key:value,key:value}
+			var f = $("#searchForm").serializeJson();
+			//调用数据表格的load方法，重新发送一次Ajax请求，并且提交参数
+			$("#grid").datagrid("load",f);
+			//关闭查询窗口
+			$("#searchWindow").window("close");
+		});
 	});
 
 	function doDblClickRow(rowIndex, rowData){
@@ -366,18 +393,11 @@
 	</div>
 	
 	<!-- 查询取派员窗口 -->
-	<div class="easyui-window" title="查询取派员" id="viewStaffWindow" collapsible="false" 
+	<div class="easyui-window" title="查询取派员" id="searchWindow" collapsible="false" 
 		minimizable="false" maximizable="false" style="top:20px;left:200px">
-		<div region="north" style="height:31px;overflow:hidden;" split="false" border="false" >
-			<div class="datagrid-toolbar">
-				<a id="view" icon="icon-search" href="#" onclick="document.getElementById('viewStaffForm').submit();return false" 
-				class="easyui-linkbutton" plain="true" >查询</a>
-			</div>
-		</div>
-		
 		<div region="center" style="overflow:auto;padding:5px;" border="false">
-			<form id="viewStaffForm" action="staffAction_view.action" method="post">
-				<input type="hidden" name="id">
+			<form id="searchForm">
+				<input type="hidden" name="query" value="query" />
 				<table class="table-edit" width="80%" align="center">
 					<tr class="title">
 						<td colspan="2">收派员信息</td>
@@ -405,6 +425,9 @@
 						<td>
 							<input type="text" name="standard" class="easyui-textbox"/>  
 						</td>
+					</tr>
+					<tr>
+						<td colspan="2"><a id="btn" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'">查询</a> </td>
 					</tr>
 					</table>
 			</form>

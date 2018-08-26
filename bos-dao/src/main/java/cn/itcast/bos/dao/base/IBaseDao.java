@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.criterion.DetachedCriteria;
+
 import cn.itcast.bos.domain.Staff;
 import cn.itcast.bos.utils.PageBean;
 
@@ -22,4 +24,5 @@ public interface IBaseDao<T> {
 	public void executeUpdate(String queryName, Object... objects);
 	public void pageQuery(PageBean pageBean);
 	public void saveOrUpdate(T entity);
+	public List<T> findByCriteria(DetachedCriteria detachedCriteria);
 }

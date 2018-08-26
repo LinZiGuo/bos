@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -29,11 +28,21 @@
 <script type="text/javascript" src="${pageContext.request.contextPath }/js/jquery.ocupload-1.1.2.js"></script>
 <script type="text/javascript">
 	function doAdd(){
+		$('#addRegionForm').form('clear');
 		$('#addRegionWindow').window("open");
 	}
 	
 	function doView(){
-		alert("修改...");
+		//alert("修改...");
+		var rowData = $('#grid').datagrid('getSelected');
+		if(rowData == null){
+			$.messager.alert("提示信息","请选择需要修改的区域","info");
+		} else{
+		//打开修改取派员窗口
+		$('#addRegionWindow').window("open");
+		//使用form表单对象的load方法回显数据
+		$("#addRegionForm").form("load",rowData);
+		}
 	}
 	
 	function doDelete(){
@@ -151,11 +160,17 @@
 			action:'${pageContext.request.contextPath}/regionAction_importXls.action'
 		});
 		
-		
+		$('#save').click(function(){
+			$('#addRegionForm').submit();
+		});
 	});
 
-	function doDblClickRow(){
-		alert("双击表格数据...");
+	function doDblClickRow(rowIndex, rowData){
+		//alert("双击表格数据...");
+		//打开修改取派员窗口
+		$('#addRegionWindow').window("open");
+		//使用form表单对象的load方法回显数据
+		$("#addRegionForm").form("load",rowData);
 	}
 	
 	
@@ -173,8 +188,9 @@
 		</div>
 		
 		<div region="center" style="overflow:auto;padding:5px;" border="false">
-			<form>
+			<form id="addRegionForm" action="regionAction_add.action" method="post">
 				<table class="table-edit" width="80%" align="center">
+					<input type="hidden" name="id" />
 					<tr class="title">
 						<td colspan="2">区域信息</td>
 					</tr>

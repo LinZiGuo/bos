@@ -29,18 +29,54 @@
 <script type="text/javascript">
 	function doAdd(){
 		$('#addDecidedzoneWindow').window("open");
+		$('#addDecidedzoneForm').form("clear");
+		$('#id').attr("readOnly",false);
 	}
 	
 	function doEdit(){
-		alert("修改...");
+		//alert("修改...");
+		var rowData = $('#grid').datagrid('getSelected');
+		if(rowData == null){
+			$.messager.alert("提示信息","请选择要修改的定区","info");
+		} else{
+		$('#addDecidedzoneWindow').window("open");
+		$("#addDecidedzoneForm").form("load",rowData);
+		$('#staff').combobox("select",rowData['staff'].id);
+		$('#id').attr("readOnly",true);
+		}
 	}
 	
 	function doDelete(){
-		alert("删除...");
+		//alert("删除...");
+		//获取所选中的行
+		var rows = $("#grid").datagrid("getSelections");
+		if(rows.length == 0){
+			//没有选中记录，弹出提示
+			$.messager.alert("提示信息","请选择需要删除的定区！","info");
+		} else{
+			//弹出确认框
+			$.messager.confirm("提示信息","确定删除当前选中的定区？",function(r){
+				if(r){
+					var ids = "";
+					var array = new Array();
+					//用户点击的是确定按钮，需要删除
+					//获取当前选中记录的id
+					for(var i=0;i<rows.length;i++){
+						//定区id
+						var id = rows[i].id;
+						array.push(id);
+					}
+					ids = array.join(",");
+					//发送请求，将ids提交到action
+					location.href = "${pageContext.request.contextPath }/decidedzoneAction_delete.action?ids=" + ids;
+				}
+			});
+		}
 	}
 	
 	function doSearch(){
 		$('#searchWindow').window("open");
+		$('#searchForm').form("clear");
 	}
 	
 	function doAssociations(){
@@ -125,7 +161,7 @@
 			pageList: [30,50,100],
 			pagination : true,
 			toolbar : toolbar,
-			url : "json/decidedzone.json",
+			url : "${pageContext.request.contextPath}/decidedzoneAction_pageQuery.action",
 			idField : 'id',
 			columns : columns,
 			onDblClickRow : doDblClickRow
@@ -152,20 +188,45 @@
 	        height: 400,
 	        resizable:false
 	    });
+		
+		//定义一个工具方法，用于将指定的form表单中所有的输入项转为json数据{key:value,key:value}
+		$.fn.serializeJson=function(){  
+            var serializeObj={};  
+            var array=this.serializeArray();
+            $(array).each(function(){  
+                if(serializeObj[this.name]){  
+                    if($.isArray(serializeObj[this.name])){  
+                        serializeObj[this.name].push(this.value);  
+                    }else{  
+                        serializeObj[this.name]=[serializeObj[this.name],this.value];  
+                    }  
+                }else{  
+                    serializeObj[this.name]=this.value;   
+                }  
+            });  
+            return serializeObj;  
+        };
+		
 		$("#btn").click(function(){
-			alert("执行查询...");
+			//alert("执行查询...");
+			//定义一个工具方法，用于将指定的form表单中所有的输入项转为json数据{key:value,key:value}
+			var f = $("#searchForm").serializeJson();
+			//调用数据表格的load方法，重新发送一次Ajax请求，并且提交参数
+			$("#grid").datagrid("load",f);
+			//关闭查询窗口
+			$("#searchWindow").window("close");
 		});
 		
 	});
 
-	function doDblClickRow(){
-		alert("双击表格数据...");
+	function doDblClickRow(rowIndex, rowData){
+		//将页面中table变为datagrid样式
 		$('#association_subarea').datagrid( {
 			fit : true,
 			border : true,
 			rownumbers : true,
 			striped : true,
-			url : "json/association_subarea.json",
+			url : "subareaAction_findListByDecidedzoneId.action?decidedzoneId=" + rowData.id,
 			columns : [ [{
 				field : 'id',
 				title : '分拣编号',
@@ -245,7 +306,6 @@
 				align : 'center'
 			}]]
 		});
-		
 	}
 </script>	
 </head>
@@ -271,18 +331,28 @@
 		<div style="height:31px;overflow:hidden;" split="false" border="false" >
 			<div class="datagrid-toolbar">
 				<a id="save" icon="icon-save" href="#" class="easyui-linkbutton" plain="true" >保存</a>
+				<script type="text/javascript">
+					$(function(){
+						$('#save').click(function(){
+							var v = $('#addDecidedzoneForm').form('validate');
+							if(v){
+								$('#addDecidedzoneForm').submit();
+							}
+						});
+					});
+				</script>
 			</div>
 		</div>
 		
 		<div style="overflow:auto;padding:5px;" border="false">
-			<form>
+			<form id="addDecidedzoneForm" action="${pageContext.request.contextPath}/decidedzoneAction_add.action" method="post">
 				<table class="table-edit" width="80%" align="center">
 					<tr class="title">
 						<td colspan="2">定区信息</td>
 					</tr>
 					<tr>
 						<td>定区编码</td>
-						<td><input type="text" name="id" class="easyui-validatebox" required="true"/></td>
+						<td><input type="text" id="id" name="id" class="easyui-validatebox" required="true"/></td>
 					</tr>
 					<tr>
 						<td>定区名称</td>
@@ -291,17 +361,17 @@
 					<tr>
 						<td>选择负责人</td>
 						<td>
-							<input class="easyui-combobox" name="region.id"  
-    							data-options="valueField:'id',textField:'name',url:'json/standard.json'" />  
+							<input class="easyui-combobox" id="staff" name="staff.id"  
+    							data-options="valueField:'id',textField:'name',url:'${pageContext.request.contextPath}/staffAction_listajax.action'" />  
 						</td>
 					</tr>
 					<tr height="300">
 						<td valign="top">关联分区</td>
 						<td>
-							<table id="subareaGrid"  class="easyui-datagrid" border="false" style="width:300px;height:300px" data-options="url:'json/decidedzone_subarea.json',fitColumns:true,singleSelect:false">
+							<table id="subareaGrid"  class="easyui-datagrid" border="false" style="width:300px;height:300px" data-options="url:'${pageContext.request.contextPath}/subareaAction_listajax.action',fitColumns:true,singleSelect:false">
 								<thead>  
 							        <tr>  
-							            <th data-options="field:'id',width:30,checkbox:true">编号</th>  
+							            <th data-options="field:'subareaid',width:30,checkbox:true">编号</th>  
 							            <th data-options="field:'addresskey',width:150">关键字</th>  
 							            <th data-options="field:'position',width:200,align:'right'">位置</th>  
 							        </tr>  
@@ -316,7 +386,7 @@
 	<!-- 查询定区 -->
 	<div class="easyui-window" title="查询定区窗口" id="searchWindow" collapsible="false" minimizable="false" maximizable="false" style="top:20px;left:200px">
 		<div style="overflow:auto;padding:5px;" border="false">
-			<form>
+			<form id="searchForm">
 				<table class="table-edit" width="80%" align="center">
 					<tr class="title">
 						<td colspan="2">查询条件</td>
