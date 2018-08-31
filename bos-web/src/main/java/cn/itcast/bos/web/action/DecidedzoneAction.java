@@ -1,5 +1,7 @@
 package cn.itcast.bos.web.action;
 
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
@@ -11,14 +13,28 @@ import cn.itcast.bos.domain.Decidedzone;
 import cn.itcast.bos.domain.Staff;
 import cn.itcast.bos.service.IDecidedzoneService;
 import cn.itcast.bos.web.action.base.BaseAction;
+import cn.itcast.crm.Customer;
+import cn.itcast.crm.ICustomerService;
 @Controller
 @Scope("prototype")
 public class DecidedzoneAction extends BaseAction<Decidedzone> {
 	@Autowired
 	private IDecidedzoneService decidedzoneService;
+	//注入crm代理对象
+	@Autowired
+	private ICustomerService proxy;
 	private String[] subareaid;
 	private String ids;
+	private List<Integer> customerIds;
 	
+	public List<Integer> getCustomerIds() {
+		return customerIds;
+	}
+
+	public void setCustomerIds(List<Integer> customerIds) {
+		this.customerIds = customerIds;
+	}
+
 	public String getIds() {
 		return ids;
 	}
@@ -90,6 +106,34 @@ public class DecidedzoneAction extends BaseAction<Decidedzone> {
 	 */
 	public String delete() {
 		decidedzoneService.batch(ids);
+		return LIST;
+	}
+	
+	/**
+	 * 远程调用crm服务，获取未关联到定区的客户
+	 * @return
+	 */
+	public String findListNotAssociation() {
+		List<Customer> list = proxy.findCustomerNotAssociation();
+		this.WriteObject2Json(list, new String[] {});
+		return NONE;
+	}
+	
+	/**
+	 * 远程调用crm服务，获取已经关联到指定的定区的客户
+	 */
+	public String findListHasAssociation(){
+		String id = model.getId();
+		List<Customer> list = proxy.findCustomerHasAssociation(id);
+		this.WriteObject2Json(list, new String[]{});
+		return NONE;
+	}
+	
+	/**
+	 * 远程调用crm服务，将客户关联到定区
+	 */
+	public String assigncustomerstodecidedzone(){
+		proxy.assigncustomerstodecidedzone(customerIds, model.getId());
 		return LIST;
 	}
 }

@@ -80,7 +80,45 @@
 	}
 	
 	function doAssociations(){
-		$('#customerWindow').window('open');
+		//$('#customerWindow').window('open');
+		//获取当前数据表格所有选中的行，返回数组
+		var rows = $("#grid").datagrid("getSelections");
+		if(rows.length != 1){
+			//弹出提示
+			$.messager.alert("提示信息","请选择一个定区操作！","warning");
+		}else{
+			//选中了一个定区
+			$('#customerWindow').window('open');
+			//清理下拉框
+			$("#noassociationSelect").empty();
+			$("#associationSelect").empty();
+			//发送ajax请求，请求定区Action，在定区Action中通过crm代理对象完成对于crm服务远程调用获取客户数据
+			var url_1 = "decidedzoneAction_findListNotAssociation.action";
+			$.post(url_1,function(data){
+				//遍历json数组
+				for(var i=0;i<data.length;i++){
+					var id = data[i].id;
+					var name = data[i].name;
+					var telephone = data[i].telephone;
+					name = name + "(" + telephone + ")";
+					$("#noassociationSelect").append("<option value='"+id+"'>"+name+"</option>");
+				}
+			});
+			
+			//发送ajax请求，请求定区Action，在定区Action中通过crm代理对象完成对于crm服务远程调用获取客户数据
+			var url_2 = "decidedzoneAction_findListHasAssociation.action";
+			var decidedzoneId = rows[0].id;
+			$.post(url_2,{"id":decidedzoneId},function(data){
+				//遍历json数组
+				for(var i=0;i<data.length;i++){
+					var id = data[i].id;
+					var name = data[i].name;
+					var telephone = data[i].telephone;
+					name = name + "(" + telephone + ")";
+					$("#associationSelect").append("<option value='"+id+"'>"+name+"</option>");
+				}
+			});
+		}
 	}
 	
 	//工具栏
@@ -288,7 +326,7 @@
 			border : true,
 			rownumbers : true,
 			striped : true,
-			url : "json/association_customer.json",
+			url : "decidedzoneAction_findListHasAssociation.action?id="+rowData.id,
 			columns : [[{
 				field : 'id',
 				title : '客户编号',
@@ -410,7 +448,7 @@
 	<!-- 关联客户窗口 -->
 	<div class="easyui-window" title="关联客户窗口" id="customerWindow" collapsible="false" closed="true" minimizable="false" maximizable="false" style="top:20px;left:200px;width: 400px;height: 300px;">
 		<div style="overflow:auto;padding:5px;" border="false">
-			<form id="customerForm" action="${pageContext.request.contextPath }/decidedzone_assigncustomerstodecidedzone.action" method="post">
+			<form id="customerForm" action="${pageContext.request.contextPath }/decidedzoneAction_assigncustomerstodecidedzone.action" method="post">
 				<table class="table-edit" width="80%" align="center">
 					<tr class="title">
 						<td colspan="3">关联客户</td>
@@ -423,6 +461,28 @@
 						<td>
 							<input type="button" value="》》" id="toRight"><br/>
 							<input type="button" value="《《" id="toLeft">
+							<script type="text/javascript">
+								$(function(){
+									//为左右移动按钮绑定事件
+									$("#toRight").click(function(){
+										$("#associationSelect").append($("#noassociationSelect option:selected"));
+									});
+									$("#toLeft").click(function(){
+										$("#noassociationSelect").append($("#associationSelect option:selected"));
+									});
+									
+									//为关联客户按钮绑定事件
+									$("#associationBtn").click(function(){
+										var rows = $("#grid").datagrid("getSelections");
+										var id = rows[0].id;
+										//为隐藏域（存放定区id）赋值
+										$("input[name=id]").val(id);
+										//提交表单之前，需要将右侧下拉框中所有的选项选中,为option添加一个selected属性
+										$("#associationSelect option").attr("selected","selected");
+										$("#customerForm").submit();
+									});
+								});
+							</script>
 						</td>
 						<td>
 							<select id="associationSelect" name="customerIds" multiple="multiple" size="10"></select>
