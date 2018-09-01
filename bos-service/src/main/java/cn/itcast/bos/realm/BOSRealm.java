@@ -1,11 +1,13 @@
 package cn.itcast.bos.realm;
 
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,13 @@ public class BOSRealm extends AuthorizingRealm{
 
 	//授权方法
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-		return null;
+		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+		//为用户授权
+		info.addStringPermission("staff-list");
+		
+		//TODO 后期需要修改为根据当前登录用户查询数据库，获取实际对应的权限
+		User user1 = (User) SecurityUtils.getSubject().getPrincipal();
+		User user2 = (User) principals.getPrimaryPrincipal();
+		return info;
 	}
 }

@@ -25,7 +25,15 @@
 		<!-- 定义全局结果集 -->
 		<global-results>
 			<result name="login">/login.jsp</result>
+			<result name="unauthorized">/unauthorized.jsp</result>
 		</global-results>
+		
+		<!-- 配置全局异常 -->
+		<global-exception-mappings>
+			<exception-mapping result="unauthorized" 
+				exception="org.apache.shiro.authz.UnauthorizedException"></exception-mapping>
+		</global-exception-mappings>
+		
 		<!-- 需要进行权限控制的页面访问 -->
 		<action name="page_*_*">
 			<result type="dispatcher">/WEB-INF/pages/{1}/{2}.jsp</result>
@@ -57,6 +65,10 @@
 		<!-- 工作单管理 -->
 		<action name="workordermanageAction_*" class="workordermanageAction" method="{1}">
 			
+		</action>
+		<!-- 工作单管理 -->
+		<action name="functionAction_*" class="functionAction" method="{1}">
+			<result name="list">/WEB-INF/pages/admin/function.jsp</result>
 		</action>
 	</package>
 </struts>

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.struts2.ServletActionContext;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
@@ -91,6 +92,8 @@ public class StaffAction extends BaseAction<Staff> {
 	 * 批量删除取派员
 	 * @return
 	 */
+	//执行这个方法，需要当前用户具有staff-delete这个权限
+	@RequiresPermissions("staff-delete")
 	public String delete() {
 		staffService.batch(ids, "staff.delete");
 		return LIST;
