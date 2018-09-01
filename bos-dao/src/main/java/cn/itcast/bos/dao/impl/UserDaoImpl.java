@@ -23,4 +23,16 @@ public class UserDaoImpl extends BaseDaoImpl<User> implements IUserDao {
 		return null;
 	}
 
+	/**
+	 * 根据用户名查询用户
+	 */
+	public User findUserByUsername(String username) {
+		String hql = "FROM User u WHERE u.username = ?";
+		List<User> list = (List<User>) this.getHibernateTemplate().find(hql, username);
+		if(list != null && list.size() > 0){
+			return list.get(0);
+		}
+		return null;
+	}
+
 }

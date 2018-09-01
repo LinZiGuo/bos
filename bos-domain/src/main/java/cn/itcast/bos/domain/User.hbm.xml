@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
@@ -31,8 +31,16 @@
         <property name="remark" type="java.lang.String">
             <column name="remark" />
         </property>
+        <set name="roles" table="user_role" >
+            <key>
+                <column name="user_id" length="32" not-null="true" />
+            </key>
+            <many-to-many entity-name="cn.itcast.bos.domain.Role">
+                <column name="role_id" length="32" not-null="true" />
+            </many-to-many>
+        </set>
     </class>
-    <query name="user.editPassword">
+    <query name="user.editpassword">
     	UPDATE User SET password = ? WHERE id = ?
     </query>
 </hibernate-mapping>
