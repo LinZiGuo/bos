@@ -1,5 +1,6 @@
 package cn.itcast.bos.domain;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,8 +23,26 @@ public class User implements java.io.Serializable {
 	private String telephone;
 	private String remark;
 	private Set noticebills = new HashSet(0);
-	private Set roles = new HashSet(0);
+	private Set<Role> roles = new HashSet(0);
 
+	public String getRoleNames() {
+		String names = "";
+		if (roles != null && roles.size() > 0) {
+			for (Role role : roles) {
+				String name = role.getName();
+				names += name + " ";
+			}
+		}
+		return names;
+	}
+	
+	public String getBirthdayStr() {
+		if (birthday == null) {
+			return "暂无数据";
+		} else {
+			return new SimpleDateFormat("yyyy-MM-dd").format(birthday);
+		}
+	}
 	// Constructors
 
 	/** default constructor */

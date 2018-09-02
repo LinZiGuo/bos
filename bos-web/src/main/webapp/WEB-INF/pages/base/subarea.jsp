@@ -27,6 +27,7 @@
 	src="${pageContext.request.contextPath }/js/easyui/locale/easyui-lang-zh_CN.js"
 	type="text/javascript"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath }/js/jquery.ocupload-1.1.2.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath }/js/highcharts/highcharts.js"></script>
 <script type="text/javascript">
 	function doAdd(){
 		$('#addSubareaWindow').window("open");
@@ -94,6 +95,23 @@
 		});
 	}
 	
+	function doCharts(){
+		$('#subareaChartWindow').window("open");
+		//页面加载完成后，动态创建图表
+		$.post("subareaAction_findGroupedSubareas.action",function(data){
+			$("#test").highcharts({
+				title: {
+		            text: '区域分区分布图'
+		        },
+		        series: [{
+		            type: 'pie',
+		            name: '区域分区分布图',
+		            data: data
+		        }]
+			});
+		});
+	}
+	
 	//工具栏
 	var toolbar = [ {
 		id : 'button-search',	
@@ -125,6 +143,11 @@
 		text : '导出',
 		iconCls : 'icon-undo',
 		handler : doExport
+	},{
+		id : 'button-charts',
+		text : '分区分布图',
+		iconCls : 'icon-tip',
+		handler : doCharts
 	}];
 	// 定义列
 	var columns = [ [ {
@@ -228,6 +251,16 @@
 	        shadow: true,
 	        closed: true,
 	        height: 400,
+	        resizable:false
+	    });
+		
+		//分区分布图
+		$('#subareaChartWindow').window({
+	        width: 800,
+	        modal: true,
+	        shadow: true,
+	        closed: true,
+	        height: 700,
 	        resizable:false
 	    });
 		
@@ -371,6 +404,12 @@
 					</tr>
 				</table>
 			</form>
+		</div>
+	</div>
+	<!-- 用于展示图表 -->
+	<div class="easyui-window" title="区域分区分布图" id="subareaChartWindow" 
+		collapsible="false" minimizable="false" maximizable="false" style="top:20px;left:200px">
+		<div id="test"  split="false" border="false" >
 		</div>
 	</div>
 </body>

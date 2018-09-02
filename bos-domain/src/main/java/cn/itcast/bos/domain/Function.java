@@ -21,6 +21,28 @@ public class Function implements java.io.Serializable {
 	private Integer zindex;
 	private Set roles = new HashSet(0);//当前权限对应的多个角色
 	private Set children = new HashSet(0);//当前权限的下级权限
+	
+	/**
+	 * 提供getpId方法，目的是当将权限转换为json对象时，其中加入一个pId字段
+	 * @return
+	 */
+	public String getpId(){
+		if(parentFunction == null){
+			return "0";
+		}
+		return parentFunction.getId();
+	}
+	
+	public Function() {}
+	
+	public Function(String functionId) {
+		this.id = functionId;
+	}
+
+	public String getText(){
+		return name;
+	}
+	
 	public String getId() {
 		return id;
 	}

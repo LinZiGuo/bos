@@ -268,4 +268,14 @@ public class SubareaAction extends BaseAction<Subarea> {
 		this.WriteObject2Json(list, new String[] {"decidedzone","subareas"});
 		return NONE;
 	}
+	
+	/**
+	 * 查询分组分区
+	 * @return
+	 */
+	public String findGroupedSubareas() {
+		List<Subarea> list = subareaService.findGroupedSubareas();
+		this.WriteObject2Json(list, new String[] {});
+		return NONE;
+	}
 }

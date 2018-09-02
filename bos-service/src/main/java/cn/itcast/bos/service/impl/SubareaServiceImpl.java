@@ -94,4 +94,11 @@ public class SubareaServiceImpl implements ISubareaService {
 		return subareaDao.findByCriteria(detachedCriteria);
 	}
 
+	/**
+	 * 查询分组分区
+	 */
+	public List<Subarea> findGroupedSubareas() {
+		return subareaDao.findGroupedSubareas();
+	}
+
 }
