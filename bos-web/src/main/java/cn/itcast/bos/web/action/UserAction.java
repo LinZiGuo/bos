@@ -23,6 +23,11 @@ import cn.itcast.bos.web.action.base.BaseAction;
 public class UserAction extends BaseAction<User> {
 	//属性驱动，接收页面输入的验证码
 	private String checkcode;
+	private String[] roleIds;
+	public void setRoleIds(String[] roleIds) {
+		this.roleIds = roleIds;
+	}
+
 	public void setCheckcode(String checkcode) {
 		this.checkcode = checkcode;
 	}
@@ -113,6 +118,25 @@ public class UserAction extends BaseAction<User> {
 		}
 		ServletActionContext.getResponse().setContentType("text/html chartset='utf-8'");
 		ServletActionContext.getResponse().getWriter().print(f);
+		return NONE;
+	}
+	
+	/**
+	 * 添加用户
+	 * @return
+	 */
+	public String add() {
+		userService.save(model,roleIds);
+		return LIST;
+	}
+	
+	/**
+	 * 分页查询
+	 * @return
+	 */
+	public String pageQuery() {
+		userService.pageQuery(pageBean);
+		this.WriteObject2Json(pageBean, new String[] {"currentPage","pageSize","detachedCriteria","noticebills","roles"});
 		return NONE;
 	}
 }

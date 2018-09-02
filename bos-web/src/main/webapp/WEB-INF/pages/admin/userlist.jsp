@@ -65,7 +65,7 @@
 		rowspan : 2,
 		align : 'center'
 	}, {
-		field : 'birthday',
+		field : 'birthdayStr',
 		title : '生日',
 		width : 120,
 		rowspan : 2,
@@ -76,7 +76,12 @@
 	}, {
 		field : 'telephone',
 		title : '电话',
-		width : 800,
+		width : 80,
+		rowspan : 2
+	}, {
+		field : 'roleNames',
+		title : '对应角色',
+		width : 500,
 		rowspan : 2
 	} ], [ {
 		field : 'station',
@@ -88,7 +93,7 @@
 		title : '工资',
 		width : 80,
 		align : 'right'
-	} ] ];
+	}] ];
 	$(function(){
 		// 初始化 datagrid
 		// 创建grid
@@ -99,7 +104,7 @@
 			rownumbers : true,
 			striped : true,
 			toolbar : toolbar,
-			url : "json/users.json",
+			url : "userAction_pageQuery.action",
 			idField : 'id', 
 			frozenColumns : frozenColumns,
 			columns : columns,
@@ -121,7 +126,7 @@
 	}
 	
 	function doAdd() {
-		alert("添加用户");
+		//alert("添加用户");
 		location.href="${pageContext.request.contextPath}/page_admin_userinfo.action";
 	}
 

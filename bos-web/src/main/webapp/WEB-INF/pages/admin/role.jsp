@@ -47,12 +47,15 @@
 					}
 				}           
 			],
-			url : '',
+			fit : true,
+			pageList : [10,20,30],
+			pagination : true,//分页条
+			url : '${pageContext.request.contextPath}/roleAction_pageQuery.action',
 			columns : [[
 				{
 					field : 'id',
 					title : '编号',
-					width : 200
+					width : 250
 				},
 				{
 					field : 'name',
