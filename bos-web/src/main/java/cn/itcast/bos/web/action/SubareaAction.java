@@ -14,6 +14,8 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.struts2.ServletActionContext;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
@@ -74,6 +76,7 @@ public class SubareaAction extends BaseAction<Subarea> {
 	 * 保存分区
 	 * @return
 	 */
+	@RequiresPermissions(value= {"subarea-add","subarea-edit"}, logical=Logical.OR)
 	public String add() {
 		Subarea subarea = subareaService.findById(model.getId());
 		if (subarea != null) {
@@ -94,6 +97,7 @@ public class SubareaAction extends BaseAction<Subarea> {
 	 * 分页查询
 	 * @return
 	 */
+	@RequiresPermissions("subarea-list")
 	public String pageQuery() {
 		DetachedCriteria dc = pageBean.getDetachedCriteria();
 		//动态添加过滤条件
@@ -132,6 +136,7 @@ public class SubareaAction extends BaseAction<Subarea> {
 	 * @return
 	 * @throws IOException 
 	 */
+	@RequiresPermissions("subarea-export")
 	public String exportXls() throws IOException {
 		//1.查询分区所有数据
 		List<Subarea> list = subareaService.findAll();
@@ -182,6 +187,7 @@ public class SubareaAction extends BaseAction<Subarea> {
 	 * 删除分区
 	 * @return
 	 */
+	@RequiresPermissions("subarea-delete")
 	public String delete() {
 		subareaService.batch(ids);
 		return LIST;
@@ -193,6 +199,7 @@ public class SubareaAction extends BaseAction<Subarea> {
 	 * @throws IOException 
 	 * @throws FileNotFoundException 
 	 */
+	@RequiresPermissions("subarea-import")
 	public String importXls() throws FileNotFoundException, IOException {
 		List<Subarea> list = new ArrayList<Subarea>();
 		//使用POI解析Excel文件
@@ -273,6 +280,7 @@ public class SubareaAction extends BaseAction<Subarea> {
 	 * 查询分组分区
 	 * @return
 	 */
+	@RequiresPermissions("subarea-charts")
 	public String findGroupedSubareas() {
 		List<Subarea> list = subareaService.findGroupedSubareas();
 		this.WriteObject2Json(list, new String[] {});

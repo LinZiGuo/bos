@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -28,22 +28,26 @@
 	type="text/javascript"></script>
 <script type="text/javascript">
 	// 工具栏
-	var toolbar = [ {
+	var toolbar = [ 
+	<shiro:hasPermission name="user-list">
+	{
 		id : 'button-view',	
 		text : '查看',
 		iconCls : 'icon-search',
 		handler : doView
-	}, {
+	},</shiro:hasPermission>
+	<shiro:hasPermission name="user-add">{
 		id : 'button-add',
 		text : '新增',
 		iconCls : 'icon-add',
 		handler : doAdd
-	}, {
+	},</shiro:hasPermission>
+	<shiro:hasPermission name="user-delete">{
 		id : 'button-delete',
 		text : '删除',
 		iconCls : 'icon-cancel',
 		handler : doDelete
-	}];
+	}</shiro:hasPermission>];
 	//定义冻结列
 	var frozenColumns = [ [ {
 		field : 'id',

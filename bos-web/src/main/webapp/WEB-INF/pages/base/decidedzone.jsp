@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -122,32 +122,38 @@
 	}
 	
 	//工具栏
-	var toolbar = [ {
+	var toolbar = [ 
+	<shiro:hasPermission name="decidedzone-list">	
+	{
 		id : 'button-search',	
 		text : '查询',
 		iconCls : 'icon-search',
 		handler : doSearch
-	}, {
+	},</shiro:hasPermission>
+	<shiro:hasPermission name="decidedzone-add">{
 		id : 'button-add',
 		text : '增加',
 		iconCls : 'icon-add',
 		handler : doAdd
-	}, {
+	},</shiro:hasPermission>
+	<shiro:hasPermission name="decidedzone-edit">{
 		id : 'button-edit',	
 		text : '修改',
 		iconCls : 'icon-edit',
 		handler : doEdit
-	},{
+	},</shiro:hasPermission>
+	<shiro:hasPermission name="decidedzone-delete">{
 		id : 'button-delete',
 		text : '删除',
 		iconCls : 'icon-cancel',
 		handler : doDelete
-	},{
+	},</shiro:hasPermission>
+	<shiro:hasPermission name="decidedzone-association">{
 		id : 'button-association',
 		text : '关联客户',
 		iconCls : 'icon-sum',
 		handler : doAssociations
-	}];
+	}</shiro:hasPermission>];
 	// 定义列
 	var columns = [ [ {
 		field : 'id',

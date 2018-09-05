@@ -13,4 +13,8 @@ public interface IRoleService {
 
 	public List<Role> findAll();
 
+	public Role findById(String roleid);
+
+	public void update(Role role, String functionIds);
+
 }

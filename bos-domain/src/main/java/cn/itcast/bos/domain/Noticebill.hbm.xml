@@ -10,7 +10,7 @@
         <many-to-one name="user" class="cn.itcast.bos.domain.User" fetch="select">
             <column name="user_id" length="32" />
         </many-to-one>
-        <many-to-one name="staff" class="cn.itcast.bos.domain.Staff" fetch="select">
+        <many-to-one lazy="false" name="staff" class="cn.itcast.bos.domain.Staff" fetch="select">
             <column name="staff_id" length="32" />
         </many-to-one>
         <property name="customerId" type="java.lang.String">

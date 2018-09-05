@@ -3,6 +3,7 @@ package cn.itcast.bos.web.action;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,7 @@ public class DecidedzoneAction extends BaseAction<Decidedzone> {
 	 * 添加定区
 	 * @return
 	 */
+	@RequiresPermissions("decidedzone-add")
 	public String add() {
 		Decidedzone decidedzone = decidedzoneService.findById(model.getId());
 		if (decidedzone != null) {
@@ -78,6 +80,7 @@ public class DecidedzoneAction extends BaseAction<Decidedzone> {
 	 * 分页查询
 	 * @return
 	 */
+	@RequiresPermissions("decidedzone-list")
 	public String pageQuery() {
 		DetachedCriteria dc = pageBean.getDetachedCriteria();
 		//动态添加过滤条件
@@ -104,6 +107,7 @@ public class DecidedzoneAction extends BaseAction<Decidedzone> {
 	 * 批量删除定区
 	 * @return
 	 */
+	@RequiresPermissions("decidedzone-delete")
 	public String delete() {
 		decidedzoneService.batch(ids);
 		return LIST;
@@ -132,6 +136,7 @@ public class DecidedzoneAction extends BaseAction<Decidedzone> {
 	/**
 	 * 远程调用crm服务，将客户关联到定区
 	 */
+	@RequiresPermissions("decidedzone-association")
 	public String assigncustomerstodecidedzone(){
 		proxy.assigncustomerstodecidedzone(customerIds, model.getId());
 		return LIST;

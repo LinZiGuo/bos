@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 import org.apache.struts2.ServletActionContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,6 +126,7 @@ public class UserAction extends BaseAction<User> {
 	 * 添加用户
 	 * @return
 	 */
+	@RequiresPermissions("user-add")
 	public String add() {
 		userService.save(model,roleIds);
 		return LIST;
@@ -134,6 +136,7 @@ public class UserAction extends BaseAction<User> {
 	 * 分页查询
 	 * @return
 	 */
+	@RequiresPermissions("user-list")
 	public String pageQuery() {
 		userService.pageQuery(pageBean);
 		this.WriteObject2Json(pageBean, new String[] {"currentPage","pageSize","detachedCriteria","noticebills","roles"});

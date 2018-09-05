@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.struts2.ServletActionContext;
 import org.hibernate.criterion.DetachedCriteria;

@@ -82,8 +82,10 @@
 				/images/** = anon
 				/validatecode.jsp* = anon
 				/login.jsp = anon
+				/functionAction_findMenu.action = anon
 				/userAction_login.action = anon
-				/page_base_staff.action = perms["staff-list"]
+				/userAction_logout.action = logout
+				/staffAction_list.action = perms["staff-list"]
 				/* = authc
 			</value>
 		</property>
@@ -136,7 +138,7 @@
 		<property name="jobDetail" ref="jobDetail"/>
 		<!-- 注入cron表达式，通过这个表达式指定触发的时间点 -->
 		<property name="cronExpression">
-			<value>0 * 17 * * ?</value>
+			<value>0 0 0 * * ? 2018</value>
 		</property>
 	</bean>
 	

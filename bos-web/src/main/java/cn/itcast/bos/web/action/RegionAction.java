@@ -11,6 +11,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.struts2.ServletActionContext;
 import org.hibernate.criterion.DetachedCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +62,7 @@ public class RegionAction extends BaseAction<Region> {
 	 * @throws IOException 
 	 * @throws FileNotFoundException 
 	 */
+	@RequiresPermissions("region-import")
 	public String importXls() throws FileNotFoundException, IOException {
 		List<Region> list = new ArrayList<Region>();
 		//使用POI解析Excel文件
@@ -104,6 +107,7 @@ public class RegionAction extends BaseAction<Region> {
 	 * @return
 	 * @throws IOException 
 	 */
+	@RequiresPermissions("region-list")
 	public String pageQuery() throws IOException {
 		regionService.pageQuery(pageBean);
 		this.WriteObject2Json(pageBean, new String[] {"currentPage","pageSize","detachedCriteria","subareas"});
@@ -131,6 +135,7 @@ public class RegionAction extends BaseAction<Region> {
 	 * 批量删除区域
 	 * @return
 	 */
+	@RequiresPermissions("region-delete")
 	public String delete() {
 		regionService.batch(ids);
 		return LIST;
@@ -140,6 +145,7 @@ public class RegionAction extends BaseAction<Region> {
 	 * 添加/修改区域
 	 * @return
 	 */
+	@RequiresPermissions(value= {"region-add","region-edit"},logical=Logical.OR)
 	public String add() {
 		String id = model.getId();
 		if (StringUtils.isNotBlank(id)) {

@@ -26,19 +26,18 @@
 <script
 	src="${pageContext.request.contextPath }/js/easyui/locale/easyui-lang-zh_CN.js"
 	type="text/javascript"></script>
-<script type="text/javascript"
-	src="${pageContext.request.contextPath }/js/ocupload/jquery.ocupload-1.1.2.js"></script>	
+<script type="text/javascript" src="${pageContext.request.contextPath }/js/jquery.ocupload-1.1.2.js"></script>	
 <script type="text/javascript">
 	$(function(){
 		$("#grid").datagrid({
-			url : '',
+			url : '${pageContext.request.contextPath}/workordermanageAction_pageQuery.action',
 			toolbar : [
 				{
 					id : 'btn-download',
 					text : '模板下载',
 					iconCls : 'icon-save',
 					handler : function(){
-						location.href = "${pageContext.request.contextPath}/download.action?filename=工作单导入模板.xls";
+						location.href = "${pageContext.request.contextPath}/workordermanageAction_download.action";
 					}
 				},{
 					id : 'btn-upload',
@@ -122,7 +121,7 @@
 		// 一键上传
 		$("#btn-upload").upload({
 			 name: 'upload',  // <input name="file" />
-		     action: '${pageContext.request.contextPath}/workOrderManage_batchImport.action',  // 提交请求action路径
+		     action: '${pageContext.request.contextPath}/workordermanageAction_batchImport.action',  // 提交请求action路径
 		     enctype: 'multipart/form-data', // 编码格式
 		     autoSubmit: true, // 选中文件提交表单
 		     onComplete: function(response) {

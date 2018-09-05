@@ -49,6 +49,7 @@ public class StaffAction extends BaseAction<Staff> {
 	 * 添加取派员
 	 * @return
 	 */
+	@RequiresPermissions("staff-add")
 	public String add() {
 		staffService.save(model);
 		return LIST;
@@ -59,6 +60,7 @@ public class StaffAction extends BaseAction<Staff> {
 	 * @return
 	 * @throws IOException 
 	 */
+	@RequiresPermissions("staff-list")
 	public String pageQuery() throws IOException {
 		DetachedCriteria dc = pageBean.getDetachedCriteria();
 		if (query != null) {
@@ -103,6 +105,7 @@ public class StaffAction extends BaseAction<Staff> {
 	 * 批量还原取派员
 	 * @return
 	 */
+	@RequiresPermissions("staff-restore")
 	public String restore() {
 		staffService.batch(ids, "staff.restore");
 		return LIST;
@@ -112,6 +115,7 @@ public class StaffAction extends BaseAction<Staff> {
 	 * 修改取派员
 	 * @return
 	 */
+	@RequiresPermissions("staff-edit")
 	public String edit() {
 		//查询数据库原始数据
 		String id = model.getId();

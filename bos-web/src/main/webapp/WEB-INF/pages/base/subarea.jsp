@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -113,42 +113,48 @@
 	}
 	
 	//工具栏
-	var toolbar = [ {
+	var toolbar = [<shiro:hasPermission name="subarea-list">{
 		id : 'button-search',	
 		text : '查询',
 		iconCls : 'icon-search',
 		handler : doSearch
-	}, {
+	},</shiro:hasPermission>
+	<shiro:hasPermission name="subarea-add">{
 		id : 'button-add',
 		text : '增加',
 		iconCls : 'icon-add',
 		handler : doAdd
-	}, {
+	},</shiro:hasPermission>
+	<shiro:hasPermission name="subarea-edit">{
 		id : 'button-edit',	
 		text : '修改',
 		iconCls : 'icon-edit',
 		handler : doEdit
-	},{
+	},</shiro:hasPermission>
+	<shiro:hasPermission name="subarea-delete">{
 		id : 'button-delete',
 		text : '删除',
 		iconCls : 'icon-cancel',
 		handler : doDelete
-	},{
+	},</shiro:hasPermission>
+	<shiro:hasPermission name="subarea-import">{
 		id : 'button-import',
 		text : '导入',
 		iconCls : 'icon-redo',
 		handler : doImport
-	},{
+	},</shiro:hasPermission>
+	<shiro:hasPermission name="subarea-export">{
 		id : 'button-export',
 		text : '导出',
 		iconCls : 'icon-undo',
 		handler : doExport
-	},{
+	},</shiro:hasPermission>
+	<shiro:hasPermission name="subarea-charts">{
 		id : 'button-charts',
 		text : '分区分布图',
 		iconCls : 'icon-tip',
 		handler : doCharts
-	}];
+	}</shiro:hasPermission>];
 	// 定义列
 	var columns = [ [ {
 		field : 'id',

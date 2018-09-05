@@ -15,4 +15,6 @@ public interface IFunctionService {
 
 	public List<Function> findMenu();
 
+	public void batch(String ids);
+
 }

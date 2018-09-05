@@ -30,19 +30,39 @@
 	$(function() {
 		$("#grid").datagrid({
 			singleSelect : true,
+			url : '${pageContext.request.contextPath}/noticebillAction_pageQuery.action',
+			pageList: [10,20,30],
+			pagination : true,
+			striped : true,
+			singleSelect: true,
+			rownumbers : true,
+			fit : true, // 占满容器
 			toolbar : [ {
 				id : 'diaodu',
 				text : '人工调度',
 				iconCls : 'icon-edit',
 				handler : function() {
-					// 弹出窗口
-					$("#diaoduWindow").window('open');
+					//获取所选中的行
+					var row = $("#grid").datagrid("getSelected");
+					if(row == null){
+						//没有选中记录，弹出提示
+						$.messager.alert("提示信息","请选择需要人工调度的工单！","info");
+					} else{
+						// 弹出窗口
+						$("#diaoduWindow").window('open');
+						$("#diaoduForm").form("load",row);
+						if(row['staff'] != null){
+							$('#id').attr("readOnly",true);
+							$("#staff").combobox("select",row['staff'].name);
+						}
+					}
 				}
 			} ],
 			columns : [ [ {
 				field : 'id',
 				title : '编号',
-				width : 100
+				width : 100,
+				checkbox : true
 			}, {
 				field : 'delegater',
 				title : '联系人',
@@ -64,15 +84,23 @@
 				title : '取件日期',
 				width : 100,
 				formatter : function(data, row, index) {
-					return data.replace("T", " ");
+					var dt;
+					if(data == null){
+						return "0000-00-00";
+					} else{
+						return (1900+data.year)+"-"+(data.month+1)+"-"+data.date;
+					}
 				}
-			} ] ],
-			url : '${pageContext.request.contextPath}/noticebill_findnoassociations.action'
+			} ] ]
 		});
 
 		// 点击保存按钮，为通知单 进行分单 --- 生成工单
 		$("#save").click(function() {
-
+			//表单校验
+			var r = $("#diaoduForm").form("validate");
+			if(r){
+				$("#diaoduForm").submit();
+			}
 		});
 	});
 </script>
@@ -92,21 +120,20 @@
 			</div>
 		</div>
 		<div region="center" style="overflow:auto;padding:5px;" border="false">
-			<form id="diaoduForm" method="post">
+			<form id="diaoduForm" method="post" action="${pageContext.request.contextPath}/noticebillAction_man.action">
 				<table class="table-edit" width="80%" align="center">
 					<tr class="title">
 						<td colspan="2">人工调度</td>
 					</tr>
 					<tr>
 						<td>通知单编号</td>
-						<td><input type="hidden" name="id" id="noticebillId" /> <span
-							id="noticebillIdView"></span>
+						<td><input type="text" name="id" id="id"/></td>
 					</tr>
 					<tr>
 						<td>选择取派员</td>
-						<td><input class="easyui-combobox" required="true"
+						<td><input id="staff" class="easyui-combobox" required="true"
 							name="staff.id"
-							data-options="valueField:'id',textField:'name',url:'${pageContext.request.contextPath }/staff_ajaxlist.action'" />
+							data-options="valueField:'id',textField:'name',url:'${pageContext.request.contextPath }/staffAction_listajax.action'" />
 						</td>
 					</tr>
 				</table>

@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -34,6 +33,7 @@
 	src="${pageContext.request.contextPath }/js/ztree/jquery.ztree.all-3.5.js"
 	type="text/javascript"></script>	
 <script type="text/javascript">
+	var zNodes2;
 	$(function(){
 		// 授权树初始化
 		var setting = {
@@ -51,19 +51,32 @@
 		};
 		
 		$.ajax({
+			url:'${pageContext.request.contextPath}/roleAction_findFunctionByRoleid.action',
+			data:{"roleid":"${roleid}"},
+			type:'POST',
+			dataType:'text',
+			success:function(data2){
+				zNodes2 = eval("(" + data2 + ")");
+			}
+		});
+		
+		$.ajax({
 			url : '${pageContext.request.contextPath}/functionAction_listajax.action',
 			type : 'POST',
 			dataType : 'text',
 			success : function(data) {
 				var zNodes = eval("(" + data + ")");
 				$.fn.zTree.init($("#functionTree"), setting, zNodes);
+				var treeObj = $.fn.zTree.getZTreeObj("functionTree");
+				for(var i=0;i<zNodes.length;i++){
+					var nodes = treeObj.getNodesByParam("id",zNodes2[i].id,null);
+					treeObj.checkNode(nodes[0],true,true);
+				}
 			},
 			error : function(msg) {
 				alert('树加载异常!');
 			}
 		});
-		
-		
 		
 		// 点击保存
 		$('#save').click(function(){
@@ -102,24 +115,24 @@
 					<tr>
 						<td width="200">关键字</td>
 						<td>
-							<input type="text" name="code" class="easyui-validatebox" data-options="required:true" />						
+							<input type="text" name="code" value="${model.code }" class="easyui-validatebox" data-options="required:true" />						
 						</td>
 					</tr>
 					<tr>
 						<td>名称</td>
-						<td><input type="text" name="name" class="easyui-validatebox" data-options="required:true" /></td>
+						<td><input type="text" name="name" value="${model.name }" class="easyui-validatebox" data-options="required:true" /></td>
 					</tr>
 					<tr>
 						<td>描述</td>
 						<td>
-							<textarea name="description" rows="4" cols="60"></textarea>
+							<textarea name="description" rows="4" cols="60">${model.description }</textarea>
 						</td>
 					</tr>
 					<tr>
 						<td>授权</td>
 						<td>
 							<ul id="functionTree" class="ztree"></ul>
-							<input name="functionIds" type="hidden">
+							<input name="functionIds" type="hidden"/>
 						</td>
 					</tr>
 					</table>

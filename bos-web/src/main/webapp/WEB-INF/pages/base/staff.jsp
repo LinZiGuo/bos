@@ -93,17 +93,23 @@
 		}
 	}
 	//工具栏
-	var toolbar = [ {
+	var toolbar = [ 
+	<shiro:hasPermission name="staff-list">
+	{
 		id : 'button-view',	
 		text : '查询',
 		iconCls : 'icon-search',
 		handler : doView
-	}, {
+	}, 
+	</shiro:hasPermission>
+	<shiro:hasPermission name="staff-add">
+	{
 		id : 'button-add',
 		text : '增加',
 		iconCls : 'icon-add',
 		handler : doAdd
 	}, 
+	</shiro:hasPermission>
 	<shiro:hasPermission name="staff-delete">
 	{
 		id : 'button-delete',
@@ -112,12 +118,15 @@
 		handler : doDelete
 	},
 	</shiro:hasPermission>
+	<shiro:hasPermission name="staff-restore">
 	{
 		id : 'button-save',
 		text : '还原',
 		iconCls : 'icon-save',
 		handler : doRestore
-	}];
+	}
+	</shiro:hasPermission>
+	];
 	// 定义列
 	var columns = [ [ {
 		field : 'id',

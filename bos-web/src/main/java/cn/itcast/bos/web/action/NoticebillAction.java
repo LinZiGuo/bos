@@ -1,10 +1,12 @@
 package cn.itcast.bos.web.action;
 
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import cn.itcast.bos.domain.Noticebill;
+import cn.itcast.bos.domain.Staff;
 import cn.itcast.bos.service.INoticebillService;
 import cn.itcast.bos.web.action.base.BaseAction;
 import cn.itcast.crm.Customer;
@@ -36,8 +38,24 @@ public class NoticebillAction extends BaseAction<Noticebill> {
 	/**
 	 * 保存一个业务通知单，并尝试自动分单
 	 */
+	@RequiresPermissions("noticebill-add")
 	public String add(){
 		noticebillService.add(model);
 		return "noticebill_add";
+	}
+	
+	@RequiresPermissions("noticebill-list")
+	public String pageQuery() {
+		noticebillService.pageQuery(pageBean);
+		this.WriteObject2Json(pageBean, new String[] {"currentPage","pageSize","detachedCriteria","user","workbills","decidedzones"});
+		return NONE;
+	}
+	
+	@RequiresPermissions("noticebill-man")
+	public String man() {
+		Noticebill noticebill = noticebillService.findById(model.getId());
+		noticebill.setStaff(model.getStaff());
+		noticebillService.update(noticebill);
+		return "diaodu";
 	}
 }

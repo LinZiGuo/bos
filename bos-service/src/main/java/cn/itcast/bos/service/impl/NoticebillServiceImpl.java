@@ -2,6 +2,9 @@ package cn.itcast.bos.service.impl;
 
 import java.sql.Timestamp;
 
+import org.apache.xmlbeans.impl.xb.xsdschema.RestrictionDocument.Restriction;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +19,7 @@ import cn.itcast.bos.domain.User;
 import cn.itcast.bos.domain.Workbill;
 import cn.itcast.bos.service.INoticebillService;
 import cn.itcast.bos.utils.BOSUtils;
+import cn.itcast.bos.utils.PageBean;
 import cn.itcast.crm.ICustomerService;
 @Service
 @Transactional
@@ -60,5 +64,28 @@ public class NoticebillServiceImpl implements INoticebillService {
 			//没有查询到定区id，不能完成自动分单
 			model.setOrdertype(Noticebill.ORDERTYPE_MAN);
 		}
+	}
+
+	/**
+	 * 分页查询
+	 */
+	public void pageQuery(PageBean pageBean) {
+		DetachedCriteria dc = pageBean.getDetachedCriteria();
+		dc.add(Restrictions.eq("ordertype", "人工分单"));
+		noticebillDao.pageQuery(pageBean);
+	}
+
+	/**
+	 * 根据ID查询通知单
+	 */
+	public Noticebill findById(String id) {
+		return noticebillDao.findById(id);
+	}
+
+	/**
+	 * 人工调度
+	 */
+	public void update(Noticebill noticebill) {
+		noticebillDao.update(noticebill);
 	}
 }

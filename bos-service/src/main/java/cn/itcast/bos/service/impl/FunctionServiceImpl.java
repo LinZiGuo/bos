@@ -2,6 +2,7 @@ package cn.itcast.bos.service.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,6 +58,18 @@ public class FunctionServiceImpl implements IFunctionService {
 			list = functionDao.findMenuByUserId(user.getId());
 		}
 		return list;
+	}
+
+	/**
+	 * 批量删除功能
+	 */
+	public void batch(String ids) {
+		if (StringUtils.isNotBlank(ids)) {
+			String[] functionIds = ids.split(",");
+			for (String functionId : functionIds) {
+				functionDao.delete(functionDao.findById(functionId));
+			}
+		}
 	}
 
 }
